@@ -31,29 +31,13 @@ resource "aws_security_group" "ingress-all-buildstack" {
         protocol = "tcp"
         description = "Allow SSH inbound"
     }
-    # HTTPD
-    ingress {
-        cidr_blocks = [ "${var.aws_sg_inbound_source_cidr}" ]
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        description = "Allow HTTPD inbound"
-    }
     # Nexus
     ingress {
         cidr_blocks = [ "${var.aws_sg_inbound_source_cidr}" ]
         from_port = 8081
         to_port = 8081
         protocol = "tcp"
-        description = "Allow Nexus"
-    }
-    # IQ Server
-    ingress {
-        cidr_blocks = [ "${var.aws_sg_inbound_source_cidr}" ]
-        from_port = 8070
-        to_port = 8070
-        protocol = "tcp"
-        description = "Allow Nexus IQ Server"
+        description = " Nexus"
     }
     # Tomcat (test env)
     ingress {
@@ -61,7 +45,7 @@ resource "aws_security_group" "ingress-all-buildstack" {
         from_port = 8080
         to_port = 8080
         protocol = "tcp"
-        description = "Allow Tomcat"
+        description = "Tomcat"
     }
     # Jenkins
     ingress {
@@ -69,7 +53,15 @@ resource "aws_security_group" "ingress-all-buildstack" {
         from_port = 8082
         to_port = 8082
         protocol = "tcp"
-        description = "Allow Tomcat"
+        description = "Jenkins"
+    }
+    # Jenkins
+    ingress {
+        cidr_blocks = [ "${var.aws_sg_inbound_source_cidr}" ]
+        from_port = 9000
+        to_port = 9000
+        protocol = "tcp"
+        description = "Sonar"
     }
 // Terraform removes the default rule
     egress {

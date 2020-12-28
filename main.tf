@@ -31,10 +31,20 @@ resource "aws_instance" "buildstack-ec2" {
         sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
 
+        # OS settings for sonar
+        ## Temporary (until reboot)
+        sudo sysctl -w vm.max_map_count=262144
+        sudo sysctl -w fs.file-max=65536
+        sudo ulimit -n 65536
+        sudo ulimit -u 4096
+        ## Permanent
+        sudo curl -L https://raw.githubusercontent.com/mikefinn/terraform-aws-buildstack/main/sonar/local/etc/sysctl.d/99-sonarqube.conf -o /etc/sysctl.d/99-sonarqube.conf
+        sudo curl -L https://raw.githubusercontent.com/mikefinn/terraform-aws-buildstack/main/sonar/local/etc/security/limits.d/99-sonarqube.conf -o /etc/security/limits.d/99-sonarqube.conf
+
         ## Get the compose file for the stack
         mkdir /home/ec2-user/buildstack
         curl -L https://raw.githubusercontent.com/mikefinn/terraform-aws-buildstack/main/docker-compose.yml -o /home/ec2-user/buildstack/docker-compose.yml
-
+        chown ec2-user:ec2-user /home/ec2-user/buildstack/docker-compose.yml
         # OS updates
         sudo yum update -y         
     EOF
