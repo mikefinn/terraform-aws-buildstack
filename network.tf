@@ -124,14 +124,11 @@ resource "aws_eip" "buildstack-eip" {
         user        = "ec2-user"
         private_key = file("~/ssh-keys/tf-poc.pem")
     }
-    provisioner "file" {
-      source  ="docker-compose.yml"
-      destination = "/home/ec2-user/xcom-buildstack/docker-compose.yml"
-    }
-    # Apply all updates
-    # provisioner "remote-exec" {
-    #     inline = ["sudo dnf update -y"]
-    # }
+    # If you need to copy a file from terraform runner to new ec2, uncomment and edit
+    #provisioner "file" {
+    #  source  ="sourcefile"
+    #  destination = "targetfile"
+    #}
     tags = {
       Name = "buildstack-eip"
     }
