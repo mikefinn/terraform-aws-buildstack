@@ -13,12 +13,6 @@ resource "aws_instance" "buildstack-ec2" {
         sudo mkdir -p /var/lib/docker
         sudo mount /dev/xvdc /var/lib/docker
 
-        # Make the mounts permanent
-        ## Back up the fstab
-        sudo cp /etc/fstab /etc/fstab.bak
-        ## Append to fstab
-        echo -e "UUID=`blkid /dev/xvdc | awk -F'"' '{print $2}'`\t/var/lib/docker\txfs\tdefaults\t1 2" | sudo tee -a /etc/fstab
-
         # Docker/Docker Compose
         ## Install docker and start
         sudo amazon-linux-extras install docker
@@ -45,6 +39,13 @@ resource "aws_instance" "buildstack-ec2" {
         mkdir /home/ec2-user/buildstack
         curl -L https://raw.githubusercontent.com/mikefinn/terraform-aws-buildstack/main/docker-compose.yml -o /home/ec2-user/buildstack/docker-compose.yml
         chown ec2-user:ec2-user /home/ec2-user/buildstack/docker-compose.yml
+
+        # Make the mounts permanent
+        ## Back up the fstab
+        sudo cp /etc/fstab /etc/fstab.bak
+        ## Append to fstab
+        echo -e "UUID=`blkid /dev/xvdc | awk -F'"' '{print $2}'`\t/var/lib/docker\txfs\tdefaults\t1 2" | sudo tee -a /etc/fstab
+
         # OS updates
         sudo yum update -y         
     EOF
